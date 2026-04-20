@@ -6,11 +6,16 @@ All output except the secret itself goes to stderr, so it plays nicely with pipe
 
 ## Install
 
-```
-make install
+Download the binary from the [latest release](https://github.com/nebez/secrets-cli/releases/latest), then:
+
+```bash
+chmod +x secrets
+mv secrets ~/.local/bin/secrets
 ```
 
-This compiles the Swift source, ad-hoc code signs it, and drops the binary into `~/.local/bin/`. Make sure that's on your `PATH`.
+Make sure `~/.local/bin` is on your `PATH`.
+
+> **Note:** The pre-built binary is for Apple Silicon (arm64). If you're on Intel, build from source (see below).
 
 ## Usage
 
@@ -33,8 +38,18 @@ Every `get` call triggers a fresh Touch ID prompt via `LAContext` with no authen
 
 ## Uninstall
 
-```
-make uninstall
+```bash
+rm ~/.local/bin/secrets
 ```
 
 Your secrets stay in the Keychain. To remove them too, `secrets delete` each key first, or use Keychain Access.app.
+
+## Build from source
+
+Requires Xcode command line tools.
+
+```bash
+make install
+```
+
+This compiles the Swift source, ad-hoc code signs it, and drops the binary into `~/.local/bin/`.
