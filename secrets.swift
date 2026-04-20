@@ -4,6 +4,34 @@ import LocalAuthentication
 
 let serviceName = "com.nebez.secrets"
 
+func requireBiometrics(reason: String) {
+    let context = LAContext()
+    context.touchIDAuthenticationAllowableReuseDuration = 0
+
+    var authError: NSError?
+    guard context.canEvaluatePolicy(.deviceOwnerAuthenticationWithBiometrics, error: &authError) else {
+        fputs("Touch ID not available: \(authError?.localizedDescription ?? "unknown")\n", stderr)
+        exit(1)
+    }
+
+    let semaphore = DispatchSemaphore(value: 0)
+    var success = false
+    var evalError: Error?
+
+    context.evaluatePolicy(.deviceOwnerAuthenticationWithBiometrics, localizedReason: reason) { ok, err in
+        success = ok
+        evalError = err
+        semaphore.signal()
+    }
+
+    semaphore.wait()
+
+    guard success else {
+        fputs("Authentication failed: \(evalError?.localizedDescription ?? "cancelled")\n", stderr)
+        exit(1)
+    }
+}
+
 func readSecureInput(prompt: String) -> String {
     fputs(prompt, stderr)
 
@@ -48,15 +76,13 @@ func setSecret(key: String, value: String) {
 }
 
 func getSecret(key: String) {
-    let context = LAContext()
-    context.localizedReason = "Access secret '\(key)'"
+    requireBiometrics(reason: "Access secret '\(key)'")
 
     let query: [String: Any] = [
         kSecClass as String: kSecClassGenericPassword,
         kSecAttrService as String: serviceName,
         kSecAttrAccount as String: key,
         kSecReturnData as String: true,
-        kSecUseAuthenticationContext as String: context,
     ]
 
     var result: AnyObject?
@@ -66,9 +92,6 @@ func getSecret(key: String) {
         print(value, terminator: "")
     } else if status == errSecItemNotFound {
         fputs("No secret found for '\(key)'\n", stderr)
-        exit(1)
-    } else if status == errSecUserCanceled || status == errSecAuthFailed {
-        fputs("Authentication failed or cancelled\n", stderr)
         exit(1)
     } else {
         fputs("Error: \(SecCopyErrorMessageString(status, nil) ?? "unknown" as CFString)\n", stderr)

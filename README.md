@@ -29,6 +29,8 @@ secrets delete my-api-key           # remove from keychain
 
 Secrets are stored as generic passwords in the macOS Keychain under the service `com.nebez.secrets`. Each key maps to a `kSecAttrAccount` entry. Nothing is written to disk — the Keychain handles storage and encryption.
 
+Every `get` call triggers a fresh Touch ID prompt via `LAContext` with no authentication caching — you'll always need your fingerprint to retrieve a secret.
+
 ## Uninstall
 
 ```
