@@ -1,4 +1,5 @@
-# secrets
+<img src="logo.svg" width="48" align="left"> # secrets
+<br clear="left"/>
 
 A tiny CLI for storing and retrieving secrets using the macOS Keychain. Secrets are stored under a dedicated service name so they don't clutter your login keychain, and retrievals go through `LAContext` so macOS will prompt Touch ID (or your password) before handing anything back.
 
