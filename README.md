@@ -30,6 +30,15 @@ secrets list                        # show all stored key names
 secrets delete my-api-key           # remove from keychain
 ```
 
+## Comparison
+
+| | `secrets` | `security` (macOS built-in) |
+|---|---|---|
+| **Auth** | Touch ID on every `get` | None once keychain is unlocked |
+| **Scope** | Dedicated service namespace | Entire keychain |
+| **Output** | Secret to stdout, everything else to stderr | Mixed metadata in stdout |
+| **UX** | `secrets get KEY` | `security find-generic-password -s SVC -a ACCT -w` |
+
 ## How it works
 
 Secrets are stored as generic passwords in the macOS Keychain under the service `com.nebez.secrets`. Each key maps to a `kSecAttrAccount` entry. Nothing is written to disk — the Keychain handles storage and encryption.

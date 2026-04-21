@@ -89,7 +89,8 @@ func getSecret(key: String) {
     let status = SecItemCopyMatching(query as CFDictionary, &result)
 
     if status == errSecSuccess, let data = result as? Data, let value = String(data: data, encoding: .utf8) {
-        print(value, terminator: "")
+        let terminator = isatty(STDOUT_FILENO) == 1 ? "\n" : ""
+        print(value, terminator: terminator)
     } else if status == errSecItemNotFound {
         fputs("No secret found for '\(key)'\n", stderr)
         exit(1)
