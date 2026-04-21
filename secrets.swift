@@ -2,6 +2,7 @@ import Foundation
 import Security
 import LocalAuthentication
 
+let version = "0.3.0"
 let serviceName = "com.nebez.secrets"
 
 func requireBiometrics(reason: String) {
@@ -153,6 +154,7 @@ func printUsage() -> Never {
       get <key>           Retrieve a secret (Touch ID)
       list                List stored keys
       delete <key>        Delete a secret
+      --version, -v       Print version
 
     The decrypted value is printed to stdout only (all other output goes to stderr).
     Pipe-friendly: secrets get my-api-key | pbcopy
@@ -190,6 +192,9 @@ case "get":
 
 case "list":
     listSecrets()
+
+case "--version", "-v":
+    print("secrets \(version)")
 
 case "delete":
     guard args.count == 2 else { printUsage() }
