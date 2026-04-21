@@ -10,21 +10,22 @@ make build
 
 Versions follow semver (`vX.Y.Z`). To cut a new release:
 
-1. Build a clean binary:
+1. Update the `version` constant in `secrets.swift` to match the new version (without the `v` prefix).
+
+2. Build a clean binary:
    ```bash
    make clean && make build
    ```
 
-2. Tag the release:
+3. Commit, tag, and push:
    ```bash
    git tag vX.Y.Z
-   git push origin vX.Y.Z
+   git push origin main vX.Y.Z
    ```
 
-3. Create the GitHub release with the binary attached:
+4. Create the GitHub release with the binary attached:
    ```bash
    gh release create vX.Y.Z ./secrets \
      --title "vX.Y.Z" \
-     --generate-notes \
      --verify-tag
    ```
